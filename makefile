@@ -1,11 +1,8 @@
 CC = gcc
 
 chess: main.o
-	$(CC) -o chess main.o init.c
-
-init.o: init.c
-	$(CC) -c init.c
-
+	$(CC) -o chess main.o
+	
 main.o: main.c
 	$(CC) -c main.c
 	
