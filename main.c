@@ -4,26 +4,17 @@
 int main() {
 	printf("%s\n", "Let's make a chess engine!");
 	allInit(); // initialization function
+	int i = 0;
+	U64 bitBoard = 0ULL;
 
-	int idx = 0;
-	for (idx = 0; idx < BOARD_NUM; ++idx) {
-		if (idx%10 == 0) {
-			printf("\n");
-		}
-		printf("%5d", B120ToB64[idx]);
-	}
+	// insertion test
+	bitBoard |= (1ULL << B64ToB120[D2]);
+	bitBoard |= (1ULL << B64ToB120[D3]);
+	bitBoard |= (1ULL << B64ToB120[D4]);
+	printBitBoard(bitBoard);
 
-	printf("\n\n");
+	int count = countBits(bitBoard);
+	printf("Count: %d\n", count);
 
-	for (idx = 0; idx < 64; ++idx) {
-		if (idx%8 == 0) {
-			printf("\n");
-		}
-		printf("%5d", B64ToB120[idx]);
-	}
-
-	printf("\n\n");
-
-	// printf("%ld\n", sizeof(B120ToB64)/sizeof(B120ToB64[0]));
 	return 0;
 }
