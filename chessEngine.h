@@ -1,3 +1,7 @@
+/*
+* This file hosts all of the definitions for the chess engine.
+* */
+
 #ifndef CHESS_H
 #define CHESS_H
 
@@ -45,7 +49,7 @@ enum {
 };
 
 // castling enum permissions
-enum {wKC = 1, wQC = 2, bKC = 4, bQC = 8};
+enum {WKC = 1, WQC = 2, BKC = 4, BQC = 8};
 
 typedef struct {
 	U64 posKey;
@@ -81,15 +85,19 @@ typedef struct {
 	UndoStruct boardHistory[MAXGAMEMOVES];
 } BoardStruct;
 
+// Macros
+#define FR2SQ(f, r) ((21+f)+(r*10))
+#define B64(b120) B120ToB64[b120]
+#define POP(b) popBit(b)
+#define CNT(b) countBits(b)
+#define SETBIT(bb, sq) (bb &= clearMask[sq])
+#define CLRBIT(bb, sq) (bb |= setMask[sq])
+
 // Global variables
 extern int B120ToB64[BOARD_NUM];
 extern int B64ToB120[64];
 extern U64 setMask[64];
 extern U64 clearMasj[64];
-
-// Macros
-#define SETBIT(bb, sq) (bb &= clearMask[sq])
-#define CLRBIT(bb, sq) (bb |= setMask[sq])
 
 // Functions
 extern void allInit();

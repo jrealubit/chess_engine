@@ -1,20 +1,36 @@
-#include <stdio.h>
+#include "stdio.h"
 #include "chessEngine.h"
 
 int main() {
-	printf("%s\n", "Let's make a chess engine!");
-	allInit(); // initialization function
-	int i = 0;
+	allInit();
+	int index = 0;
 	U64 bitBoard = 0ULL;
+	//
+	//
+	// SETBIT(bitBoard, 61);
+	// PrintBitBoard(bitBoard);
+	//
+	//
+	// CLRBIT(bitBoard, 61);
+	// PrintBitBoard(bitBoard);
 
-	// insertion test
-	bitBoard |= (1ULL << B64ToB120[D2]);
-	bitBoard |= (1ULL << B64ToB120[D3]);
-	bitBoard |= (1ULL << B64ToB120[D4]);
+	bitBoard |= (1ULL << B64(D2));
+	bitBoard |= (1ULL << B64(D3));
+	bitBoard |= (1ULL << B64(D4));
+
+	printf("\n");
 	printBitBoard(bitBoard);
 
-	int count = countBits(bitBoard);
-	printf("Count: %d\n", count);
+	int count = CNT(bitBoard);
+	printf("Bit count: %d\n", count);
+
+	int i = POP(&bitBoard);
+	printf("Popped Index: %d\n", i);
+
+	printBitBoard(bitBoard);
+
+	count = CNT(bitBoard);
+	printf("Bit count: %d\n", count);
 
 	return 0;
 }
