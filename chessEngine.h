@@ -1,5 +1,6 @@
 /*
 * This file hosts all of the definitions for the chess engine.
+* All c code files in connect to this directory.
 * */
 
 #ifndef CHESS_H
@@ -22,7 +23,7 @@ exit(-1); \
 }
 #endif
 
-typedef unsigned long long U64;
+typedef unsigned long long U64; // 64-bit data type
 #define NAME "Chess Engine 1.0"
 #define BOARD_NUM 120
 #define MAXGAMEMOVES 2048
@@ -45,7 +46,7 @@ enum {
   A5 = 61, B5, C5, D5, E5, F5, G5, H5,
   A6 = 71, B6, C6, D6, E6, F6, G6, H6,
   A7 = 81, B7, C7, D7, E7, F7, G7, H7,
-  A8 = 91, B8, C8, D8, E8, F8, G8, H8, NO_SQ
+  A8 = 91, B8, C8, D8, E8, F8, G8, H8, NO_SQ, OFFBOARD
 };
 
 // castling enum permissions
@@ -71,6 +72,7 @@ typedef struct {
 	int fiftyMove;
 	int ply;
 	int histPly;
+	int move;
 	int castlePermission;
 
 	int chessPieces[BOARD_NUM];
@@ -88,6 +90,7 @@ typedef struct {
 // Macros
 #define FR2SQ(f, r) ((21+f)+(r*10))
 #define B64(b120) B120ToB64[b120]
+#define B120(b64) B64ToB120[b64]
 #define POP(b) popBit(b)
 #define CNT(b) countBits(b)
 #define SETBIT(bb, sq) (bb &= clearMask[sq])
@@ -98,11 +101,23 @@ extern int B120ToB64[BOARD_NUM];
 extern int B64ToB120[64];
 extern U64 setMask[64];
 extern U64 clearMasj[64];
+extern U64 pieceKeys[13][120];
+extern U64 sideKey;
+extern U64 castleKeys[16];
 
 // Functions
+// init.c
 extern void allInit();
-extern void printBitBoard(U64 bb);
+
+// bitboards.c
 extern int countBits(U64 b);
 extern int popBit(U64 *bb);
+extern void printBitBoard(U64 bb);
+
+// haskkeys.c
+extern U64 generatePositionKey(const BoardStruct* b);
+
+// board.c
+extern void resetBoard(BoardStruct* b);
 
 #endif

@@ -1,9 +1,7 @@
 /*
- * bitboards.c
- *
- * This file is the bit representation of the
- * board for the chess engine.
- * */
+ * bitboards.c is used as the bit representation of the
+ * board for the chess engine. Conencts to chessEngine.h.
+ */
 
  #include "stdio.h"
  #include "chessEngine.h"
@@ -37,19 +35,19 @@
  	int b64 = 0;
 
  	printf("\n");
- 	for(r = RANK_8; r >= RANK_1; --r) {
- 		for(f = FILE_A; f <= FILE_H; ++f) {
+ 	for (r = RANK_8; r >= RANK_1; --r) {
+ 		for (f = FILE_A; f <= FILE_H; ++f) {
  			b = FR2SQ(f, r);	// 120 based converison
  			b64 = B64(b); // 64 based conversion
 
- 			if((shiftNum << b64) & bb) {
+ 			if ((shiftNum << b64) & bb) {
  				printf("X");
-       }
+      }
  			else {
  				printf("-");
-       }
- 		}
+			}
+		}
  		printf("\n");
  	}
-     printf("\n\n");
+  printf("\n\n");
  }
