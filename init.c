@@ -7,8 +7,8 @@
 #include "chessEngine.h"
 
 // Macro to create a 64-bit psued0-random hask key
-#define RAND_64 ((U64)rand + (U64)rand << 15 + (U64)rand << 30 + \
-								(U64)rand << 45 + ((U64)rand & 0xf) << 60)
+#define RAND_64 ((U64)rand() | (U64)rand() << 15 | (U64)rand() << 30 | \
+								(U64)rand() << 45 | ((U64)rand() & 0xf) << 60)
 
 int B120ToB64[BOARD_NUM];
 int B64ToB120[64];

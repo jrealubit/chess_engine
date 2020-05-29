@@ -1,10 +1,13 @@
 CC = gcc
 
-build: main.o init.o bitboards.o hashkeys.o board.o
-	$(CC) -o chess main.o init.o bitboards.o hashkeys.o board.o
+build: main.o init.o bitboards.o hashkeys.o board.o data.o
+	$(CC) -o chess main.o init.o bitboards.o hashkeys.o board.o data.o
+
+data.o: data.c
+	$(CC) -c data.c
 
 board.o: board.c
-		$(CC) -c board.c
+	$(CC) -c board.c
 
 hashkeys.o: hashkeys.c
 	$(CC) -c hashkeys.c

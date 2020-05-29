@@ -3,6 +3,7 @@
 * for each position on the board. Connects to chessEngine.h.
 */
 
+#include "stdio.h"
 #include "chessEngine.h"
 
 U64 generatePositionKey(const BoardStruct* b) {
@@ -15,8 +16,8 @@ U64 generatePositionKey(const BoardStruct* b) {
 
     // check to see if it an actual piece in the board
     // that is at least a white pawn all the way to a black king
-    if (piece != NO_SQ && piece != EMPTY) {
-      ASSERT(piece >= wP && piece >= bK);
+    if (piece != NO_SQ && piece != EMPTY && piece != OFFBOARD) {
+      ASSERT(piece >= wP && piece <= bK);
       finalKey ^= pieceKeys[piece][i];
     }
   }
