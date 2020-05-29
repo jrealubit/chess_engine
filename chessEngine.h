@@ -8,8 +8,8 @@
 
 #include "stdlib.h"
 
-#define DEBUG
 #ifndef DEBUG
+#define DEBUG
 #define ASSERT(n)
 #else
 #define ASSERT(n) \
@@ -28,12 +28,14 @@ typedef unsigned long long U64; // 64-bit data type
 #define BOARD_NUM 120
 #define MAXGAMEMOVES 2048
 
+#define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+
 enum {FALSE, TRUE};
 enum {WHITE, BLACK, BOTH}; // chess colors
 
 // board file and rank and enumeration for
 // cell positions on board- w: white, b: black
-enum {EMPTY, wP, wKN, wB, wR, wQ, wK, bP, bKN, bB, bR, bQ, bK};
+enum {EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK};
 enum {FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE};
 enum {RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE};
 
@@ -104,6 +106,10 @@ extern U64 clearMasj[64];
 extern U64 pieceKeys[13][120];
 extern U64 sideKey;
 extern U64 castleKeys[16];
+extern char pieceChar[];
+extern char sideChar[];
+extern char fileChar[];
+extern char rankChar[];
 
 // Functions
 // init.c
@@ -119,5 +125,7 @@ extern U64 generatePositionKey(const BoardStruct* b);
 
 // board.c
 extern void resetBoard(BoardStruct* b);
+extern int parseFenStr(char* fen_str, BoardStruct* b);
+extern void printBoard(const BoardStruct* b);
 
 #endif
