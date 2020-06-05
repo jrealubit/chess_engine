@@ -125,9 +125,9 @@ typedef struct {
 #define Captured(m) ((m>>14) & 0xF)
 #define Promoted(m) ((m>>20) & 0xF)
 
-#define MoveFlagEP 0x40000
-#define MoveFlagPS 0x80000
-#define MoveFlagCP 0x1000000
+#define MoveFlagEP 0x40000 // en passant flag
+#define MoveFlagPS 0x80000 // pawn start flag
+#define MoveFlagCP 0x1000000 // castling permissions 
 #define MoveFlagCAP 0x7C000 // capture flag
 #define MoveFlagPROM 0xF00000 // promotion flag
 
