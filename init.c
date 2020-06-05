@@ -3,6 +3,7 @@
  * board for the chess engine. Conencts to chessEngine.h.
  */
 
+#include "stdio.h"
 #include "stdlib.h"
 #include "chessEngine.h"
 
@@ -12,6 +13,9 @@
 
 int B120ToB64[BOARD_NUM];
 int B64ToB120[64];
+
+int FileOnBoard[BOARD_NUM];
+int RankOnBoard[BOARD_NUM];
 
 U64 setMask[64];
 U64 clearMask[64];
@@ -77,9 +81,48 @@ void initHashKeys() {
 	}
 }
 
+// function to initialize file and rank on board
+void initFileAndRank() {
+	int i = 0;
+	int f = FILE_A;
+	int r = RANK_1;
+	int b = A1;
+	int b64 = 0;
+
+	for (i = 0; i < BOARD_NUM; ++i) {
+		FileOnBoard[i] = OFFBOARD;
+		RankOnBoard[i] = OFFBOARD;
+	}
+
+	for (r = RANK_1; r <= RANK_8; ++r) {
+		for (f = FILE_A; f <= FILE_H; ++f) {
+			b = FR2SQ(f, r);
+			FileOnBoard[b] = f;
+			RankOnBoard[b] = r;
+		}
+	}
+
+	// printf("Files on Board:\n");
+	// for (i = 0; i < BOARD_NUM; ++i) {
+	// 	if (i%10 == 0 && i != 0) {
+	// 		printf("\n");
+	// 	}
+	// 	printf("%4d ", FileOnBoard[i]);
+	// }
+	//
+	// printf("\nRank on Board:\n");
+	// for (i = 0; i < BOARD_NUM; ++i) {
+	// 	if (i%10 == 0 && i != 0) {
+	// 		printf("\n");
+	// 	}
+	// 	printf("%4d ", RankOnBoard[i]);
+	// }
+}
+
 void allInit() {
 	initB120To64();
 	initBitMasks();
 	initHashKeys();
+	initFileAndRank();
 	return;
 }

@@ -6,7 +6,7 @@
 #ifndef CHESS_H
 #define CHESS_H
 
-#include "stdlib.h"
+// #include "stdlib.h"
 
 #ifndef DEBUG
 #define DEBUG
@@ -55,6 +55,11 @@ enum {
 enum {WKC = 1, WQC = 2, BKC = 4, BQC = 8};
 
 typedef struct {
+	int move;
+	int score;
+} MoveStruct;
+
+typedef struct {
 	U64 posKey;
 
 	int move;
@@ -80,16 +85,17 @@ typedef struct {
 	int chessPieces[BOARD_NUM];
 	int kingSq[2];
 	int pieceNum[13];
-	int bigPieces[3]; // non-pawn pieces
-	int majorPieces[3]; // rooks and queens
-	int minorPieces[3]; // bishops and knights
+	int bigPieces[2]; // non-pawn pieces
+	int majorPieces[2]; // rooks and queens
+	int minorPieces[2]; // bishops and knights
+	int material[2];
 	int pieceList[13][10];
 
 	// board history for retraction
 	UndoStruct boardHistory[MAXGAMEMOVES];
 } BoardStruct;
 
-// Macros
+// General Macros
 #define FR2SQ(f, r) ((21+f)+(r*10))
 #define B64(b120) B120ToB64[b120]
 #define B120(b64) B64ToB120[b64]
@@ -97,12 +103,39 @@ typedef struct {
 #define CNT(b) countBits(b)
 #define SETBIT(bb, sq) (bb &= clearMask[sq])
 #define CLRBIT(bb, sq) (bb |= setMask[sq])
+#define IsKing(p) (pieceKing[p])
+#define IsKnight(p) (pieceKnight[p])
+#define IsRookQueen(p) (pieceRookQueen[p])
+#define IsBishopQueen(p) (pieceBishopQueen[p])
+
+// Game Move Macros
+/*
+* 28-bit move information structure:
+* 0000 0000 0000 0000 0000 0111 1111 : from 0x7F
+* 0000 0000 0000 0011 1111 1000 0000 : to >> 7, 0x7F
+* 0000 0000 0011 1100 0000 0000 0000 : captured >> 14, 0xF
+* 0000 0000 0100 0000 0000 0000 0000 : en passant t0x40000
+* 0000 0000 1000 0000 0000 0000 0000 : pawn start? 0x80000
+* 0000 1111 0000 0000 0000 0000 0000 : piece promotion >> 20, 0xF
+* 0001 0000 0000 0000 0000 0000 0000 : castling permissions 0x1000000
+*/
+
+#define FromBPos(m) (m & 0x7F)
+#define ToBPos(m) ((m>>7) & 0x7F)
+#define Captured(m) ((m>>14) & 0xF)
+#define Promoted(m) ((m>>20) & 0xF)
+
+#define MoveFlagEP 0x40000 // en passant flag
+#define MoveFlagPS 0x80000 // pawn start flag
+#define MoveFlagCP 0x1000000 // castling permissions 
+#define MoveFlagCAP 0x7C000 // capture flag
+#define MoveFlagPROM 0xF00000 // promotion flag
 
 // Global variables
 extern int B120ToB64[BOARD_NUM];
 extern int B64ToB120[64];
 extern U64 setMask[64];
-extern U64 clearMasj[64];
+extern U64 clearMask[64];
 extern U64 pieceKeys[13][120];
 extern U64 sideKey;
 extern U64 castleKeys[16];
@@ -110,6 +143,20 @@ extern char pieceChar[];
 extern char sideChar[];
 extern char fileChar[];
 extern char rankChar[];
+
+extern int pieceBig[13];
+extern int pieceMajor[13];
+extern int pieceMinor[13];
+extern int pieceValue[13];
+extern int pieceColor[13];
+
+extern int FileOnBoard[BOARD_NUM];
+extern int RankOnBoard[BOARD_NUM];
+
+extern int pieceKnight[13];
+extern int pieceKing[13];
+extern int pieceRookQueen[13];
+extern int pieceBishopQueen[13];
 
 // Functions
 // init.c
@@ -127,5 +174,14 @@ extern U64 generatePositionKey(const BoardStruct* b);
 extern void resetBoard(BoardStruct* b);
 extern int parseFenStr(char* fen_str, BoardStruct* b);
 extern void printBoard(const BoardStruct* b);
+extern void updateMaterialLists(BoardStruct* b);
+extern int checkBoard(const BoardStruct* b);
+
+// attack.c
+extern int bPosAttacked(const int pos, const int side, const BoardStruct* b);
+
+// io.c
+extern char* printMove(const int move);
+extern char* printBPos(const int bpos);
 
 #endif

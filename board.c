@@ -20,7 +20,7 @@ void resetBoard(BoardStruct* b) {
   }
 
   // set all piece types to 0
-  for (i = 0; i < 3; ++i) {
+  for (i = 0; i < 2; ++i) {
     b->pawns[i] = 0ULL;
     b->bigPieces[i] = 0;
     b->majorPieces[i] = 0;
@@ -42,6 +42,48 @@ void resetBoard(BoardStruct* b) {
   b->ply = b->histPly = 0;
   b->castlePermission = 0;
   b->posKey = 0ULL;
+}
+
+void updateMaterialLists(BoardStruct* b) {
+  int i, piece, sq, color;
+  for (i = 0; i < BOARD_NUM; ++i) {
+    sq = i;
+    piece = b->chessPieces[i];
+    if (piece != OFFBOARD && piece != EMPTY) {
+      color = pieceColor[piece];
+      if (pieceBig[piece] == TRUE) {
+        b->bigPieces[color]++;
+      }
+      if (pieceMajor[piece] == TRUE) {
+        b->majorPieces[color]++;
+      }
+      if (pieceMinor[piece] == TRUE) {
+        b->minorPieces[color]++;
+      }
+
+      b->material[color] += pieceValue[piece];
+      b->pieceList[piece][b->pieceNum[piece]] = sq;
+      b->pieceNum[piece]++;
+
+      // king piece
+      if (piece == wK) {
+        b->kingSq[WHITE] = sq;
+      }
+      if (piece == bK) {
+        b->kingSq[BLACK] = sq;
+      }
+
+      // pawn piece
+      if (piece == wP) {
+        SETBIT(b->pawns[WHITE], B64(sq));
+        SETBIT(b->pawns[BOTH], B64(sq));
+      }
+      else if (piece == bP) {
+        SETBIT(b->pawns[BLACK], B64(sq));
+        SETBIT(b->pawns[BOTH], B64(sq));
+      }
+    }
+  }
 }
 
 int parseFenStr(char* fen_str, BoardStruct* b) {
@@ -98,7 +140,7 @@ int parseFenStr(char* fen_str, BoardStruct* b) {
         continue;
 
       default:
-        printf("fen_str parsing error\n");
+        printf("Error: fen_str parsing error\n");
         return -1;
     }
 
@@ -116,7 +158,7 @@ int parseFenStr(char* fen_str, BoardStruct* b) {
     fen_str++;
   }
 
-  ASSERT(*fen_str == 'b' || *fen_str == 'b');
+  ASSERT(*fen_str == 'w' || *fen_str == 'b');
   if (*fen_str == 'w') {
     b->side = WHITE;
   }
@@ -154,6 +196,7 @@ int parseFenStr(char* fen_str, BoardStruct* b) {
   }
 
   b->posKey = generatePositionKey(b); // generate hash key
+  updateMaterialLists(b); // update the materials on the board
   return 0;
 }
 
@@ -186,5 +229,9 @@ void printBoard(const BoardStruct* b) {
         b->castlePermission&BKC ? 'k' : '-',
         b->castlePermission&BQC ? 'q' : '-');
   printf("PosKey: %llx\n", b->posKey);
+}
 
+// TODO: FINISH 
+int checkBoard(const BoardStruct* b) {
+  return 0;
 }
