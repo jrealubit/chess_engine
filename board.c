@@ -25,6 +25,7 @@ void resetBoard(BoardStruct* b) {
     b->bigPieces[i] = 0;
     b->majorPieces[i] = 0;
     b->minorPieces[i] = 0;
+    b->material[i] = 0;
   }
 
   // clear piece numbers on the board
@@ -231,7 +232,7 @@ void printBoard(const BoardStruct* b) {
   printf("PosKey: %llx\n", b->posKey);
 }
 
-// TODO: FINISH 
+// TODO: FINISH
 int checkBoard(const BoardStruct* b) {
   return 0;
 }

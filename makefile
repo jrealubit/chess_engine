@@ -3,6 +3,12 @@ CC = gcc
 build: main.o init.o bitboards.o hashkeys.o board.o data.o attack.o io.o
 	$(CC) -o chess main.o init.o bitboards.o hashkeys.o board.o data.o attack.o io.o
 
+validate.o: validate.c
+	$(CC) -c validate.c
+	
+movegenerator.o: movegenerator.c
+	$(CC) -c movegenerator.c
+
 io.o: io.c
 	$(CC) -c io.c
 
