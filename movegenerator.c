@@ -94,7 +94,7 @@ void addCaptureWPMove(const BoardStruct* b, const int from, const int to,
 
 // function to add a quiet black pawn move to the list
 void addQuietBPMove(const BoardStruct* b, const int from, const int to,
-  MoveListStruct* list ) {
+  const int cap, MoveListStruct* list ) {
   // assert to and from board positions are valid
   ASSERT(posOnBoard(from) == TRUE);
   ASSERT(posOnBoard(to) == TRUE);
