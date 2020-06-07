@@ -54,32 +54,80 @@ void addEnPasMove(const BoardStruct* b, int move, MoveListStruct* list) {
   list->count++;
 }
 
-//TODO: Finish
 // function to add a quiet white pawn move to the list
 void addQuietWPMove(const BoardStruct* b, const int from, const int to,
-  MoveListStruct* list ) {
-  return;
+  const int cap, MoveListStruct* list ) {
+  // assert to and from board positions are valid
+  ASSERT(posOnBoard(from) == TRUE);
+  ASSERT(posOnBoard(to) == TRUE);
+
+  if (RankOnBoard[from] == RANK_7) {
+    addQuietMove(b, MOVE(from, to, EMPTY, wN, 0), list);
+    addQuietMove(b, MOVE(from, to, EMPTY, wB, 0), list);
+    addQuietMove(b, MOVE(from, to, EMPTY, wR, 0), list);
+    addQuietMove(b, MOVE(from, to, EMPTY, wQ, 0), list);
+  }
+  else {
+    addQuietMove(b, MOVE(from to, cap, EMPTY, 0), list);
+  }
 }
 
-//TODO: Finish
 // function to add a white pawn capture move to the list
 void addCaptureWPMove(const BoardStruct* b, const int from, const int to,
   const int cap, MoveListStruct* list ) {
-  return;
+  // assert to and from board positions are valid
+  // also check that captured piece is valid
+  ASSERT(posOnBoard(from) == TRUE);
+  ASSERT(posOnBoard(to) == TRUE);
+  ASSERT(pieceValidEmpty(cap) == TRUE);
+
+  if (RankOnBoard[from] == RANK_7) {
+    addQuietMove(b, MOVE(from, to, cap, wN, 0), list);
+    addQuietMove(b, MOVE(from, to, cap, wB, 0), list);
+    addQuietMove(b, MOVE(from, to, cap, wR, 0), list);
+    addQuietMove(b, MOVE(from, to, cap, wQ, 0), list);
+  }
+  else {
+    addCaptureMove(b, MOVE(from to, cap, EMPTY, 0), list);
+  }
 }
 
-//TODO: Finish
 // function to add a quiet black pawn move to the list
 void addQuietBPMove(const BoardStruct* b, const int from, const int to,
   MoveListStruct* list ) {
-  return;
+  // assert to and from board positions are valid
+  ASSERT(posOnBoard(from) == TRUE);
+  ASSERT(posOnBoard(to) == TRUE);
+
+  if (RankOnBoard[from] == RANK_2) {
+    addQuietMove(b, MOVE(from, to, EMPTY, bN, 0), list);
+    addQuietMove(b, MOVE(from, to, EMPTY, bB, 0), list);
+    addQuietMove(b, MOVE(from, to, EMPTY, bR, 0), list);
+    addQuietMove(b, MOVE(from, to, EMPTY, bQ, 0), list);
+  }
+  else {
+    addQuietMove(b, MOVE(from to, cap, EMPTY, 0), list);
+  }
 }
 
-//TODO: Finish
 // function to add a black pawn capture move to the list
 void addCaptureBPMove(const BoardStruct* b, const int from, const int to,
   const int cap, MoveListStruct* list ) {
-  return;
+  // assert to and from board positions are valid
+  // also check that captured piece is valid
+  ASSERT(posOnBoard(from) == TRUE);
+  ASSERT(posOnBoard(to) == TRUE);
+  ASSERT(pieceValidEmpty(cap) == TRUE);
+
+  if (RankOnBoard[from] == RANK_2) {
+    addQuietMove(b, MOVE(from, to, cap, bN, 0), list);
+    addQuietMove(b, MOVE(from, to, cap, bB, 0), list);
+    addQuietMove(b, MOVE(from, to, cap, bR, 0), list);
+    addQuietMove(b, MOVE(from, to, cap, bQ, 0), list);
+  }
+  else {
+    addCaptureMove(b, MOVE(from to, cap, EMPTY, 0), list);
+  }
 }
 
 //TODO: Finish
