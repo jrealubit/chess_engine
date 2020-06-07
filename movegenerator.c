@@ -54,11 +54,35 @@ void addEnPasMove(const BoardStruct* b, int move, MoveListStruct* list) {
   list->count++;
 }
 
+//TODO: Finish
 // function to add a quiet white pawn move to the list
-// function to add a white pawn capture move to the list
-// function to add a quiet black pawn move to the list
-// function to add a black pawn capture move to the list
+void addQuietWPMove(const BoardStruct* b, const int from, const int to,
+  MoveListStruct* list ) {
+  return;
+}
 
+//TODO: Finish
+// function to add a white pawn capture move to the list
+void addCaptureWPMove(const BoardStruct* b, const int from, const int to,
+  const int cap, MoveListStruct* list ) {
+  return;
+}
+
+//TODO: Finish
+// function to add a quiet black pawn move to the list
+void addQuietBPMove(const BoardStruct* b, const int from, const int to,
+  MoveListStruct* list ) {
+  return;
+}
+
+//TODO: Finish
+// function to add a black pawn capture move to the list
+void addCaptureBPMove(const BoardStruct* b, const int from, const int to,
+  const int cap, MoveListStruct* list ) {
+  return;
+}
+
+//TODO: Finish
 // function to generate all possible moves from a certain side on the board
 int generateAllMoves(const BoardStruct* b, MoveListStruct* list) {
   return 0;
