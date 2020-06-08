@@ -135,7 +135,6 @@ void addCaptureBPMove(const BoardStruct* b, const int from, const int to,
   }
 }
 
-//TODO: Finish
 // function to generate all possible moves from a certain side on the board
 void generateAllMoves(const BoardStruct* b, MoveListStruct* list) {
   ASSERT(checkBoard(b)); // board state must be valid
@@ -253,4 +252,62 @@ void generateAllMoves(const BoardStruct* b, MoveListStruct* list) {
   // loop for the sliding pieces
   pieceIndex = slideLoopIndex[side];
   piece = slidePieceLoopList[pieceIndex++];
+
+  while (piece != 0) {
+    ASSERT(pieceValid(piece));
+
+    for (pieceNum = 0; pieceNum < b->pieceNum[piece]; ++pieceNum) {
+      bPos = b->pieceList[piece][pieceNum];
+      ASSERT(posOnBoard(bPos));
+
+      for (i = 0; i < numDir[piece]; ++i) {
+        dir = pieceDir[piece][i];
+        tempBPos = bPos+dir;
+
+        while(!BPOSOFFBOARD(tempBPos)) {
+          if (b->chessPieces[tempBPos] == side^1) {
+            if (pieceColor[b->chessPieces[tempBPos]] == side^1) {
+              addCaptureMove(b, MOVE(bPos, tempBPos,
+                b->chessPieces[tempBPos], EMPTY, 0), list);
+            }
+            break;
+          }
+          addQuietMove(b, MOVE(bPos, tempBPos, EMPTY, EMPTY, 0), list);
+          tempBPos += dir;
+        }
+      }
+    }
+    piece = slidePieceLoopList[pieceIndex++];
+  }
+
+  // loop for the nonsliding pieces
+  pieceIndex = nonSlideLoopIndex[side];
+  piece = nonSlidePieceLoopList[pieceIndex++];
+
+  while (piece != 0) {
+    ASSERT(pieceValid(piece));
+
+    for (pieceNum = 0; pieceNum < b->pieceNum[piece]; ++pieceNum) {
+      bPos = b->pieceList[piece][pieceNum];
+      ASSERT(posOnBoard(bPos));
+
+      for (i = 0; i < numDir[piece]; ++i) {
+        dir = pieceDir[piece][i];
+        tempBPos = bPos+dir;
+
+        while(!BPOSOFFBOARD(tempBPos)) {
+          if (b->chessPieces[tempBPos] == side^1) {
+            if (pieceColor[b->chessPieces[tempBPos]] == side^1) {
+              addCaptureMove(b, MOVE(bPos, tempBPos,
+                b->chessPieces[tempBPos], EMPTY, 0), list);
+            }
+            break;
+          }
+          addQuietMove(b, MOVE(bPos, tempBPos, EMPTY, EMPTY, 0), list);
+          tempBPos += dir;
+        }
+      }
+    }
+    piece = nonSlidePieceLoopList[pieceIndex++];
+  }
 }

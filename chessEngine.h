@@ -1,6 +1,7 @@
 /*
 * This file hosts all of the definitions for the chess engine.
-* All .c code files in connect to this directory.
+* All .c code files in connect to this directory. I think naming
+* the program Sinanju is pretty cool.
 * */
 
 #ifndef CHESS_H
@@ -24,7 +25,7 @@ exit(-1); \
 #endif
 
 typedef unsigned long long U64; // 64-bit data type
-#define NAME "Chess Engine 1.0"
+#define NAME "Sinanju 1.0"
 #define BOARD_NUM 120
 #define MAXGAMEMOVES 2048
 #define MAXBOARDMOVES 256
