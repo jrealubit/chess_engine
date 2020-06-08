@@ -45,3 +45,18 @@
    sprintf(bposStr, "%c%c", ('a'+f), ('1'+r));
    return bposStr;
  }
+
+ void printMoveList(const MoveListStruct* list) {
+   int i = 0;
+   int score = 0;
+   int move = 0;
+
+   printf("Move list:\nNumber of moves: %d\n\n", list->count);
+
+   for (i = 0; i < list->count; ++i) {
+     score = list->movesList[i].score;
+     move = list->movesList[i].move;
+
+     printf("Move: %d > %s (Score: %d)\n", i+1, printMove(move), score);
+   }
+ }

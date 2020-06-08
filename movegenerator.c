@@ -1,8 +1,12 @@
+/*
+ * movegenerator.c is used to house the piece movement logic
+ * of the board for the chess engine. Conencts to chessEngine.h.
+ */
 #include "stdio.h"
 #include "chessEngine.h"
 
 // from, to, captured, and promotion
-#define MOVE(f, t, cap, prom, fl) (f | (t<<7) | (cap<<14) | (prom<<20) | fl);
+#define MOVE(f, t, cap, prom, fl) (f | (t<<7) | (cap<<14) | (prom<<20) | fl)
 #define BPOSOFFBOARD(bPos) (FileOnBoard[bPos]==OFFBOARD)
 
 // sliding pieces
@@ -18,6 +22,7 @@ int numDir[13] = {0, 0, 8, 4, 4, 8, 8, 0, 4, 4, 8, 8};
 
 // list of board positions each piece can move to
 // pawns are considered as 0 all across the board
+// because there are dedicate move functions for pawns
 int pieceDir[13][8] = {
   {0, 0, 0, 0, 0, 0, 0, 0}, // empty
   {0, 0, 0, 0, 0, 0, 0, 0}, // white pawn
@@ -56,7 +61,7 @@ void addEnPasMove(const BoardStruct* b, int move, MoveListStruct* list) {
 
 // function to add a quiet white pawn move to the list
 void addQuietWPMove(const BoardStruct* b, const int from, const int to,
-  const int cap, MoveListStruct* list ) {
+  MoveListStruct* list ) {
   // assert to and from board positions are valid
   ASSERT(posOnBoard(from) == TRUE);
   ASSERT(posOnBoard(to) == TRUE);
@@ -68,7 +73,7 @@ void addQuietWPMove(const BoardStruct* b, const int from, const int to,
     addQuietMove(b, MOVE(from, to, EMPTY, wQ, 0), list);
   }
   else {
-    addQuietMove(b, MOVE(from to, cap, EMPTY, 0), list);
+    addQuietMove(b, MOVE(from, to, EMPTY, EMPTY, 0), list);
   }
 }
 
@@ -88,13 +93,13 @@ void addCaptureWPMove(const BoardStruct* b, const int from, const int to,
     addQuietMove(b, MOVE(from, to, cap, wQ, 0), list);
   }
   else {
-    addCaptureMove(b, MOVE(from to, cap, EMPTY, 0), list);
+    addCaptureMove(b, MOVE(from, to, cap, EMPTY, 0), list);
   }
 }
 
 // function to add a quiet black pawn move to the list
 void addQuietBPMove(const BoardStruct* b, const int from, const int to,
-  const int cap, MoveListStruct* list ) {
+  MoveListStruct* list ) {
   // assert to and from board positions are valid
   ASSERT(posOnBoard(from) == TRUE);
   ASSERT(posOnBoard(to) == TRUE);
@@ -106,7 +111,7 @@ void addQuietBPMove(const BoardStruct* b, const int from, const int to,
     addQuietMove(b, MOVE(from, to, EMPTY, bQ, 0), list);
   }
   else {
-    addQuietMove(b, MOVE(from to, cap, EMPTY, 0), list);
+    addQuietMove(b, MOVE(from, to, EMPTY, EMPTY, 0), list);
   }
 }
 
@@ -126,12 +131,126 @@ void addCaptureBPMove(const BoardStruct* b, const int from, const int to,
     addQuietMove(b, MOVE(from, to, cap, bQ, 0), list);
   }
   else {
-    addCaptureMove(b, MOVE(from to, cap, EMPTY, 0), list);
+    addCaptureMove(b, MOVE(from, to, cap, EMPTY, 0), list);
   }
 }
 
 //TODO: Finish
 // function to generate all possible moves from a certain side on the board
-int generateAllMoves(const BoardStruct* b, MoveListStruct* list) {
-  return 0;
+void generateAllMoves(const BoardStruct* b, MoveListStruct* list) {
+  ASSERT(checkBoard(b)); // board state must be valid
+
+  list->count = 0;
+
+  int i = 0;
+  int piece = EMPTY;
+  int side = b->side;
+  int bPos = 0;
+  int tempBPos = 0; // temporary board position
+  int pieceNum = 0;
+  int pieceIndex = 0;
+  int dir = 0;
+
+  printf("\n\nSide:%d\n", side);
+
+  if (side == WHITE) {
+    for (pieceNum = 0; pieceNum < b->pieceNum[wP]; ++pieceNum) {
+      bPos = b->pieceList[wP][pieceNum];
+      ASSERT(posOnBoard(bPos)); // assert piece exists and is valid
+
+      // if positon in front is empty- add a quiet move up
+      if (b->chessPieces[bPos+10] == EMPTY) {
+        addQuietWPMove(b, bPos, bPos+10, list);
+        if (RankOnBoard[bPos] == RANK_2 && b->chessPieces[bPos+20] == EMPTY) {
+          addQuietMove(b, MOVE(bPos, bPos+20, EMPTY, EMPTY, MFLAGPS), list);
+        }
+      }
+
+      // if valid postion on the board that has an enemy pawn
+      if (!BPOSOFFBOARD(bPos+9) &&
+      pieceColor[b->chessPieces[bPos+9]] == BLACK) {
+        addCaptureWPMove(b, bPos, bPos+9, b->chessPieces[bPos+9], list);
+      }
+      if (!BPOSOFFBOARD(bPos+11) &&
+      pieceColor[b->chessPieces[bPos+11]] == BLACK) {
+        addCaptureWPMove(b, bPos, bPos+11, b->chessPieces[bPos+11], list);
+      }
+
+      // check en passant positions
+      if (bPos+9 == b->enPas) {
+        addCaptureMove(b, MOVE(bPos, bPos+9, EMPTY, EMPTY, MFLAGEP), list);
+      }
+      if (bPos+11 == b->enPas) {
+        addCaptureMove(b, MOVE(bPos, bPos+11, EMPTY, EMPTY, MFLAGEP), list);
+      }
+    }
+
+    // castling permissions
+    if (b->castlePermission & WKC) {
+      if (b->chessPieces[F1] == EMPTY && b->chessPieces[G1] == EMPTY) {
+        if (!bPosAttacked(E1, BLACK, b) && !bPosAttacked(F1, BLACK, b)) {
+          addQuietMove(b, MOVE(E1, G1, EMPTY, EMPTY, MFLAGCP), list);
+        }
+      }
+    }
+    if (b->castlePermission & WQC) {
+      if (b->chessPieces[D1] == EMPTY && b->chessPieces[C1] == EMPTY) {
+        if (!bPosAttacked(E1, BLACK, b) && !bPosAttacked(D1, BLACK, b)) {
+          addQuietMove(b, MOVE(E1, C1, EMPTY, EMPTY, MFLAGCP), list);
+        }
+      }
+    }
+  }
+  else { // black side
+    for (pieceNum = 0; pieceNum < b->pieceNum[wP]; ++pieceNum) {
+      bPos = b->pieceList[bP][pieceNum];
+      ASSERT(posOnBoard(bPos)); // assert piece exists and is valid
+
+      // if positon in front is empty- add a quiet move up
+      if (b->chessPieces[bPos-10] == EMPTY) {
+        addQuietWPMove(b, bPos, bPos-10, list);
+        if (RankOnBoard[bPos] == RANK_2 && b->chessPieces[bPos-20] == EMPTY) {
+          addQuietMove(b, MOVE(bPos, bPos-20, EMPTY, EMPTY, MFLAGPS), list);
+        }
+      }
+
+      // if valid postion on the board that has an enemy pawn
+      if (!BPOSOFFBOARD(bPos-9) &&
+      pieceColor[b->chessPieces[bPos-9]] == WHITE) {
+        addCaptureWPMove(b, bPos, bPos-9, b->chessPieces[bPos-9], list);
+      }
+      if (!BPOSOFFBOARD(bPos-11) &&
+      pieceColor[b->chessPieces[bPos-11]] == WHITE) {
+        addCaptureWPMove(b, bPos, bPos-11, b->chessPieces[bPos-11], list);
+      }
+
+      // check en passant positions
+      if (bPos-9 == b->enPas) {
+        addCaptureMove(b, MOVE(bPos, bPos-9, EMPTY, EMPTY, MFLAGEP), list);
+      }
+      if (bPos-11 == b->enPas) {
+        addCaptureMove(b, MOVE(bPos, bPos-11, EMPTY, EMPTY, MFLAGEP), list);
+      }
+    }
+
+    // castling permissions
+    if (b->castlePermission & WKC) {
+      if (b->chessPieces[F8] == EMPTY && b->chessPieces[G8] == EMPTY) {
+        if (!bPosAttacked(E8, BLACK, b) && !bPosAttacked(F8, WHITE, b)) {
+          addQuietMove(b, MOVE(E8, G8, EMPTY, EMPTY, MFLAGCP), list);
+        }
+      }
+    }
+    if (b->castlePermission & WQC) {
+      if (b->chessPieces[D8] == EMPTY && b->chessPieces[C8] == EMPTY) {
+        if (!bPosAttacked(E8, WHITE, b) && !bPosAttacked(D8, WHITE, b)) {
+          addQuietMove(b, MOVE(E8, C8, EMPTY, EMPTY, MFLAGCP), list);
+        }
+      }
+    }
+  }
+
+  // loop for the sliding pieces
+  pieceIndex = slideLoopIndex[side];
+  piece = slidePieceLoopList[pieceIndex++];
 }

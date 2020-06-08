@@ -1,6 +1,6 @@
 /*
 * This file hosts all of the definitions for the chess engine.
-* All c code files in connect to this directory.
+* All .c code files in connect to this directory.
 * */
 
 #ifndef CHESS_H
@@ -131,11 +131,11 @@ typedef struct {
 #define Captured(m) ((m>>14) & 0xF)
 #define Promoted(m) ((m>>20) & 0xF)
 
-#define MoveFlagEP 0x40000 // en passant flag
-#define MoveFlagPS 0x80000 // pawn start flag
-#define MoveFlagCP 0x1000000 // castling permissions
-#define MoveFlagCAP 0x7C000 // capture flag
-#define MoveFlagPROM 0xF00000 // promotion flag
+#define MFLAGEP 0x40000 // en passant flag
+#define MFLAGPS 0x80000 // pawn start flag
+#define MFLAGCP 0x1000000 // castling permissions
+#define MFLAGCAP 0x7C000 // capture flag
+#define MFLAGPROM 0xF00000 // promotion flag
 
 // Global variables
 extern int B120ToB64[BOARD_NUM];
@@ -189,9 +189,10 @@ extern int bPosAttacked(const int pos, const int side, const BoardStruct* b);
 // io.c
 extern char* printMove(const int move);
 extern char* printBPos(const int bpos);
+extern void printMoveList(const MoveListStruct* list);
 
 // movegenerator.c
-extern int generateAllMoves(const BoardStruct* b, MoveListStruct* list);
+extern void generateAllMoves(const BoardStruct* b, MoveListStruct* list);
 
 // validate.c
 extern int posOnBoard(const int bPos);
