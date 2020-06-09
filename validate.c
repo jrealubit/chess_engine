@@ -1,5 +1,5 @@
 /*
- * validateff.c is used to house the validation function used on the 
+ * validateff.c is used to house the validation function used on the
  * board for the chess engine. Conencts to chessEngine.h.
  */
 #include "chessEngine.h"

@@ -180,7 +180,6 @@ int parseFenStr(char* fen_str, BoardStruct* b) {
       case 'q': b->castlePermission |= BQC; break;
       default: break;
     }
-
     fen_str++;
   }
 
@@ -232,7 +231,7 @@ void printBoard(const BoardStruct* b) {
   printf("PosKey: %llx\n", b->posKey);
 }
 
-// function to check and validate the board 
+// function to check and validate the board
 int checkBoard(const BoardStruct* b) {
   U64 tempPawns[3] = {0ULL, 0ULL, 0ULL};
 

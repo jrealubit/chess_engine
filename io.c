@@ -20,10 +20,10 @@
      if (IsKnight(promoted)) {
        pieceChar = 'n';
      }
-     else if (IsRookQueen(promoted)) {
+     else if (IsRookQueen(promoted) && !IsBishopQueen(promoted)) {
        pieceChar = 'r';
      }
-     else if (IsBishopQueen(promoted)) {
+     else if (IsBishopQueen(promoted) && !IsRookQueen(promoted)) {
        pieceChar = 'b';
      }
 
@@ -51,12 +51,11 @@
    int score = 0;
    int move = 0;
 
-   printf("Move list:\nNumber of moves: %d\n\n", list->count);
+   printf("Number of moves: %d\nMove list:\n", list->count);
 
    for (i = 0; i < list->count; ++i) {
      score = list->movesList[i].score;
      move = list->movesList[i].move;
-
      printf("Move: %d > %s (Score: %d)\n", i+1, printMove(move), score);
    }
  }

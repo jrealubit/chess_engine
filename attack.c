@@ -17,14 +17,18 @@ const int bishopDir[4] = {-11, -9, 9, 11};
 int bPosAttacked(const int pos, const int side, const BoardStruct* b) {
   int i, piece, temp_pos, dir;
 
+  ASSERT(posOnBoard(pos) == TRUE);
+  ASSERT(sideValid(side) == TRUE);
+  ASSERT(checkBoard(b) == TRUE);
+
   // check pawns
   if (side == WHITE) {
-    if (b->chessPieces[pos-11] == wP || b->chessPieces[pos-11] == wP) {
+    if (b->chessPieces[pos-9] == wP || b->chessPieces[pos-11] == wP) {
       return TRUE;
     }
   }
   else {
-    if (b->chessPieces[pos+11] == bP || b->chessPieces[pos+11] == bP) {
+    if (b->chessPieces[pos+9] == bP || b->chessPieces[pos+11] == bP) {
       return TRUE;
     }
   }

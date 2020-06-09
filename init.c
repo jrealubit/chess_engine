@@ -101,22 +101,6 @@ void initFileAndRank() {
 			RankOnBoard[b] = r;
 		}
 	}
-
-	// printf("Files on Board:\n");
-	// for (i = 0; i < BOARD_NUM; ++i) {
-	// 	if (i%10 == 0 && i != 0) {
-	// 		printf("\n");
-	// 	}
-	// 	printf("%4d ", FileOnBoard[i]);
-	// }
-	//
-	// printf("\nRank on Board:\n");
-	// for (i = 0; i < BOARD_NUM; ++i) {
-	// 	if (i%10 == 0 && i != 0) {
-	// 		printf("\n");
-	// 	}
-	// 	printf("%4d ", RankOnBoard[i]);
-	// }
 }
 
 void allInit() {
