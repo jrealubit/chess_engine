@@ -1,6 +1,7 @@
 /*
 * This file hosts all of the definitions for the chess engine.
-* All c code files in connect to this directory.
+* All .c code files in connect to this directory. I think naming
+* the program Sinanju is pretty cool.
 * */
 
 #ifndef CHESS_H
@@ -24,9 +25,10 @@ exit(-1); \
 #endif
 
 typedef unsigned long long U64; // 64-bit data type
-#define NAME "Chess Engine 1.0"
+#define NAME "Sinanju 1.0"
 #define BOARD_NUM 120
 #define MAXGAMEMOVES 2048
+#define MAXBOARDMOVES 256
 
 #define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
@@ -58,6 +60,11 @@ typedef struct {
 	int move;
 	int score;
 } MoveStruct;
+
+typedef struct {
+	MoveStruct movesList[MAXBOARDMOVES];
+	int count;
+} MoveListStruct;
 
 typedef struct {
 	U64 posKey;
@@ -125,11 +132,11 @@ typedef struct {
 #define Captured(m) ((m>>14) & 0xF)
 #define Promoted(m) ((m>>20) & 0xF)
 
-#define MoveFlagEP 0x40000 // en passant flag
-#define MoveFlagPS 0x80000 // pawn start flag
-#define MoveFlagCP 0x1000000 // castling permissions 
-#define MoveFlagCAP 0x7C000 // capture flag
-#define MoveFlagPROM 0xF00000 // promotion flag
+#define MFLAGEP 0x40000 // en passant flag
+#define MFLAGPS 0x80000 // pawn start flag
+#define MFLAGCP 0x1000000 // castling permissions
+#define MFLAGCAP 0x7C000 // capture flag
+#define MFLAGPROM 0xF00000 // promotion flag
 
 // Global variables
 extern int B120ToB64[BOARD_NUM];
@@ -167,7 +174,7 @@ extern int countBits(U64 b);
 extern int popBit(U64 *bb);
 extern void printBitBoard(U64 bb);
 
-// haskkeys.c
+// hashkeys.c
 extern U64 generatePositionKey(const BoardStruct* b);
 
 // board.c
@@ -183,5 +190,16 @@ extern int bPosAttacked(const int pos, const int side, const BoardStruct* b);
 // io.c
 extern char* printMove(const int move);
 extern char* printBPos(const int bpos);
+extern void printMoveList(const MoveListStruct* list);
+
+// movegenerator.c
+extern void generateAllMoves(const BoardStruct* b, MoveListStruct* list);
+
+// validate.c
+extern int posOnBoard(const int bPos);
+extern int sildeValid(const int side);
+extern int fileAndRankValid(const int fileRank);
+extern int pieceValid(const int piece);
+extern int pieceValidEmpty(const int piece);
 
 #endif

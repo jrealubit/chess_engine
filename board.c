@@ -25,6 +25,7 @@ void resetBoard(BoardStruct* b) {
     b->bigPieces[i] = 0;
     b->majorPieces[i] = 0;
     b->minorPieces[i] = 0;
+    b->material[i] = 0;
   }
 
   // clear piece numbers on the board
@@ -179,7 +180,6 @@ int parseFenStr(char* fen_str, BoardStruct* b) {
       case 'q': b->castlePermission |= BQC; break;
       default: break;
     }
-
     fen_str++;
   }
 
@@ -231,7 +231,101 @@ void printBoard(const BoardStruct* b) {
   printf("PosKey: %llx\n", b->posKey);
 }
 
-// TODO: FINISH 
+// function to check and validate the board
 int checkBoard(const BoardStruct* b) {
-  return 0;
+  U64 tempPawns[3] = {0ULL, 0ULL, 0ULL};
+
+  // initialize the temporary pawn values
+  tempPawns[WHITE] = b->pawns[WHITE];
+  tempPawns[BLACK] = b->pawns[BLACK];
+  tempPawns[BOTH] = b->pawns[BOTH];
+
+  // initalize of temporary list values as we do not want to mess
+  // with the actual piece values of the game
+  int b64, b120, temp, tempNum, color, pieceCount;
+  int tempPieceNum[13] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int tempBigPiece[2] = {0, 0};
+  int tempMajorPiece[2] = {0, 0};
+  int tempMinorPiece[2] = {0, 0};
+  int tempMaterial[2] = {0, 0};
+
+  // check piece lists
+  for (temp = wP; temp <= bK; ++temp) {
+    for (tempNum = 0; tempNum < b->pieceNum[temp]; ++tempNum) {
+      b120 = b->pieceList[temp][tempNum];
+      ASSERT(b->chessPieces[b120] == temp); // assert piece value is valid
+    }
+  }
+
+  // check piece counts and counters
+  for (b64 = 0; b64 <= 64; ++b64) {
+    b120 = B120(b64);
+    temp = b->chessPieces[b120];
+    tempPieceNum[temp]++;
+    color = pieceColor[temp];
+
+    if (pieceBig[temp] == TRUE) {
+      tempBigPiece[color]++;
+    }
+    if (pieceMajor[temp] == TRUE) {
+      tempMajorPiece[color]++;
+    }
+    if (pieceMinor[temp] == TRUE) {
+      tempMinorPiece[color]++;
+    }
+
+    tempMaterial[color] += pieceValue[temp];
+  }
+
+  // assert that all piece values found on the board
+  // are the same as the actually recorded number of pieces
+  for (temp = wP; temp <= bK; ++temp) {
+    ASSERT(tempPieceNum[temp] == b->pieceNum[temp]);
+  }
+
+  // check values found in the bitboard
+  pieceCount = CNT(tempPawns[WHITE]);
+  ASSERT(pieceCount == b->pieceNum[wP]);
+  pieceCount = CNT(tempPawns[BLACK]);
+  ASSERT(pieceCount == b->pieceNum[bP]);
+  pieceCount = CNT(tempPawns[BOTH]);
+  ASSERT(pieceCount == (b->pieceNum[wP]+b->pieceNum[bP]));
+
+  // check bitboard board positions
+  while (tempPawns[WHITE]) {
+    b64 = POP(&tempPawns[WHITE]);
+    ASSERT(b->chessPieces[B120(b64)] == wP);
+  }
+
+  while (tempPawns[BLACK]) {
+    b64 = POP(&tempPawns[BLACK]);
+    ASSERT(b->chessPieces[B120(b64)] == bP);
+  }
+
+  while (tempPawns[BOTH]) {
+    b64 = POP(&tempPawns[BOTH]);
+    ASSERT((b->chessPieces[B120(b64)] == wP) ||
+            (b->chessPieces[B120(b64)] == bP));
+  }
+
+  // additional checks
+  ASSERT(tempBigPiece[WHITE] == b->bigPieces[WHITE] &&
+    tempBigPiece[BLACK] == b->bigPieces[BLACK]);
+  ASSERT(tempMajorPiece[WHITE] == b->majorPieces[WHITE] &&
+    tempMajorPiece[BLACK] == b->majorPieces[BLACK]);
+  ASSERT(tempMinorPiece[WHITE] == b->minorPieces[WHITE] &&
+    tempMinorPiece[BLACK] == b->minorPieces[BLACK]);
+  ASSERT(tempMaterial[WHITE] == b->material[WHITE] &&
+    tempMaterial[BLACK] == b->material[BLACK]);
+
+  // check en passant validation
+  ASSERT(b->enPas == NO_SQ ||
+    (RankOnBoard[b->enPas] == RANK_6 && b->side == WHITE) ||
+    (RankOnBoard[b->enPas] == RANK_3 && b->side == BLACK));
+
+  // check board position of the king
+  ASSERT(b->chessPieces[b->kingSq[WHITE]] == wK);
+  ASSERT(b->chessPieces[b->kingSq[BLACK]] == bK);
+  return TRUE; // must return true or fail
+
 }

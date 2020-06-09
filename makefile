@@ -1,11 +1,22 @@
 CC = gcc
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 build: main.o init.o bitboards.o hashkeys.o board.o data.o
 	$(CC) -o chess main.o init.o bitboards.o hashkeys.o board.o data.o
 =======
 build: main.o init.o bitboards.o hashkeys.o board.o data.o attack.o io.o
 	$(CC) -o chess main.o init.o bitboards.o hashkeys.o board.o data.o attack.o io.o
+=======
+build: main.o init.o bitboards.o hashkeys.o board.o data.o attack.o io.o movegenerator.o validate.o
+	$(CC) -o chess main.o init.o bitboards.o hashkeys.o board.o data.o attack.o io.o movegenerator.o validate.o
+
+validate.o: validate.c
+	$(CC) -c validate.c
+
+movegenerator.o: movegenerator.c
+	$(CC) -c movegenerator.c
+>>>>>>> checkpoint
 
 io.o: io.c
 	$(CC) -c io.c
