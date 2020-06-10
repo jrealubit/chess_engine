@@ -10,20 +10,20 @@
 #define BPOSOFFBOARD(bPos) (FileOnBoard[bPos] == OFFBOARD)
 
 // sliding pieces
-int slidePieceList[8] = {wB, wR, wQ, 0, bB, bR, bQ, 0};
-int slideLoopIndex[2] = {0, 4};
+const int slidePieceList[8] = {wB, wR, wQ, 0, bB, bR, bQ, 0};
+const int slideLoopIndex[2] = {0, 4};
 
 // non-sliding pieces
-int nonSlidePieceList[6] = {wN, wK, 0, bN, bK, 0};
-int nonSlideLoopIndex[2] = {0, 3};
+const int nonSlidePieceList[6] = {wN, wK, 0, bN, bK, 0};
+const int nonSlideLoopIndex[2] = {0, 3};
 
 // number of directions for each piece
-int numDir[13] = {0, 0, 8, 4, 4, 8, 8, 0, 8, 4, 4, 8, 8};
+const int numDir[13] = {0, 0, 8, 4, 4, 8, 8, 0, 8, 4, 4, 8, 8};
 
 // list of board positions each piece can move to
 // pawns are considered as 0 all across the board
 // because there are dedicated move functions for pawns
-int pieceDir[13][8] = {
+const int pieceDir[13][8] = {
   {0, 0, 0, 0, 0, 0, 0, 0}, // empty
   {0, 0, 0, 0, 0, 0, 0, 0}, // white pawn
   {-21, -19, -12, -8, 8, 12, 19, 21}, // white knight
@@ -39,28 +39,28 @@ int pieceDir[13][8] = {
 };
 
 // function to add in a quiet move to the list
-void addQuietMove(const BoardStruct* b, int move, MoveListStruct* list) {
+static void addQuietMove(const BoardStruct* b, int move, MoveListStruct* list) {
   list->movesList[list->count].move = move;
   list->movesList[list->count].score = 0;
   list->count++;
 }
 
 // function to add in a capture move to the list
-void addCaptureMove(const BoardStruct* b, int move, MoveListStruct* list) {
+static void addCaptureMove(const BoardStruct* b, int move, MoveListStruct* list) {
   list->movesList[list->count].move = move;
   list->movesList[list->count].score = 0;
   list->count++;
 }
 
 // function to add an en passant move to the list
-void addEnPasMove(const BoardStruct* b, int move, MoveListStruct* list) {
+static void addEnPasMove(const BoardStruct* b, int move, MoveListStruct* list) {
   list->movesList[list->count].move = move;
   list->movesList[list->count].score = 0;
   list->count++;
 }
 
 // function to add a quiet white pawn move to the list
-void addWPQuietMove(const BoardStruct* b, const int from, const int to,
+static void addWPQuietMove(const BoardStruct* b, const int from, const int to,
   MoveListStruct* list ) {
   // assert to and from board positions are valid
   ASSERT(posOnBoard(from) == TRUE);
@@ -78,7 +78,7 @@ void addWPQuietMove(const BoardStruct* b, const int from, const int to,
 }
 
 // function to add a white pawn capture move to the list
-void addWPCapMove(const BoardStruct* b, const int from, const int to,
+static void addWPCapMove(const BoardStruct* b, const int from, const int to,
   const int cap, MoveListStruct* list ) {
   // check to, from board positions, and captured are valid
   ASSERT(posOnBoard(from) == TRUE);
@@ -97,7 +97,7 @@ void addWPCapMove(const BoardStruct* b, const int from, const int to,
 }
 
 // function to add a quiet black pawn move to the list
-void addBPQuietMove(const BoardStruct* b, const int from, const int to,
+static void addBPQuietMove(const BoardStruct* b, const int from, const int to,
   MoveListStruct* list ) {
   // assert to and from board positions are valid
   ASSERT(posOnBoard(from) == TRUE);
@@ -115,7 +115,7 @@ void addBPQuietMove(const BoardStruct* b, const int from, const int to,
 }
 
 // function to add a black pawn capture move to the list
-void addBPCapMove(const BoardStruct* b, const int from, const int to,
+static void addBPCapMove(const BoardStruct* b, const int from, const int to,
   const int cap, MoveListStruct* list ) {
   // assert to and from board positions are valid
   ASSERT(posOnBoard(from) == TRUE);

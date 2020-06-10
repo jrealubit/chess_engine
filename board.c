@@ -21,11 +21,14 @@ void resetBoard(BoardStruct* b) {
 
   // set all piece types to 0
   for (i = 0; i < 2; ++i) {
-    b->pawns[i] = 0ULL;
     b->bigPieces[i] = 0;
     b->majorPieces[i] = 0;
     b->minorPieces[i] = 0;
     b->material[i] = 0;
+  }
+
+  for (i = 0; i < 3; ++i) {
+    b->pawns[i] = 0ULL;
   }
 
   // clear piece numbers on the board
