@@ -29,3 +29,5 @@ int pieceRookQueen[13] = {FALSE, FALSE, FALSE, FALSE, TRUE, TRUE,
                           FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE };
 int pieceBishopQueen[13] = {FALSE, FALSE, FALSE, TRUE, FALSE, TRUE,
                             FALSE, FALSE, FALSE, TRUE, FALSE, TRUE, FALSE };
+int pieceSlides[13] = {FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE,
+                        FALSE, FALSE, FALSE, TRUE, TRUE, TRUE};                            
