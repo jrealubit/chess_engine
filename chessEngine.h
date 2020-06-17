@@ -156,6 +156,7 @@ extern int pieceMajor[13];
 extern int pieceMinor[13];
 extern int pieceValue[13];
 extern int pieceColor[13];
+extern int piecePawn[13];
 
 extern int FileOnBoard[BOARD_NUM];
 extern int RankOnBoard[BOARD_NUM];
