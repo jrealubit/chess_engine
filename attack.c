@@ -3,6 +3,7 @@
  * board for the chess engine. Conencts to chessEngine.h.
  */
 
+#include "stdio.h"
 #include "chessEngine.h"
 
 // directions from the piece square where certain
@@ -12,78 +13,74 @@ const int knightDir[8] = {-21, -19, -12, -8, 8, 12, 19, 21};
 const int rookDir[4] = {-10, -1, 1, 10};
 const int bishopDir[4] = {-11, -9, 9, 11};
 
-// function to check if board position is
-// in potential threat
-int bPosAttacked(const int pos, const int side, const BoardStruct* b) {
-  int i, piece, temp_pos, dir;
+// function to check if board positions is threatened
+int posAttacked(const int pos, const int side, const BoardStruct *b) {
+	int i, piece, t, dir;
 
-  ASSERT(posOnBoard(pos) == TRUE);
-  ASSERT(sideValid(side) == TRUE);
-  ASSERT(checkBoard(b) == TRUE);
+	ASSERT(posOnBoard(pos));
+	ASSERT(SideValid(side));
+	ASSERT(CheckBoard(b));
 
-  // check pawns
-  if (side == WHITE) {
-    if (b->chessPieces[pos-9] == wP || b->chessPieces[pos-11] == wP) {
-      return TRUE;
-    }
-  }
-  else {
-    if (b->chessPieces[pos+9] == bP || b->chessPieces[pos+11] == bP) {
-      return TRUE;
-    }
-  }
+	// check pawns
+	if (side == WHITE) {
+		if (b->pieces[pos-9] == wP || b->pieces[pos-11] == wP) {
+			return TRUE;
+		}
+	} else {
+		if (b->pieces[pos+9] == bP || b->pieces[pos+11] == bP) {
+			return TRUE;
+		}
+	}
 
-  // check kings
-  for (i = 0; i < 8; ++i) {
-    piece = b->chessPieces[pos+kingDir[i]];
-    if (IsKing(piece) && pieceColor[piece] == side) {
-      return TRUE;
-    }
-  }
+	// check kings
+	for (i = 0; i < 8; ++i) {
+		piece = b->pieces[pos+kingDir[i]];
+		if (piece != OFFBOARD && IsKing(piece) && pieceColor[piece]==side) {
+			return TRUE;
+		}
+	}
 
-  // check knights
-  for (i = 0; i < 8; ++i) {
-    piece = b->chessPieces[pos+knightDir[i]]; // get piece at position
-    if (IsKnight(piece) && pieceColor[piece] == side) {
-      return TRUE;
-    }
-  }
+	// check knights
+	for (i = 0; i < 8; ++i) {
+		piece = b->pieces[pos+knightDir[i]];
+		if (piece != OFFBOARD && IsKnight(piece) && pieceColor[piece]==side) {
+			return TRUE;
+		}
+	}
 
-  // check rooks and queens
-  for (i = 0; i < 4; ++i) {
-    dir = rookDir[i];
-    temp_pos = pos+dir;
-    piece = b->chessPieces[temp_pos];
+	// check rooks and queens
+	for (i = 0; i < 4; ++i) {
+		dir = rookDir[i];
+		t = pos + dir;
+		piece = b->pieces[t];
+		while (piece != OFFBOARD) {
+			if (piece != EMPTY) {
+				if (IsRookQueen(piece) && pieceColor[piece] == side) {
+					return TRUE;
+				}
+				break;
+			}
+			t += dir;
+			piece = b->pieces[t];
+		}
+	}
 
-    while (piece != OFFBOARD) {
-      if (piece != EMPTY) {
-        if (IsRookQueen(piece) && pieceColor[piece] == side) {
-          return TRUE;
-        }
-        break;
-      }
-      temp_pos += dir;
-      piece = b->chessPieces[temp_pos];
-    }
-  }
+	// check bishops and queens
+	for (i = 0; i < 4; ++i) {
+		dir = bishopDir[i];
+		t = pos + dir;
+		piece = b->pieces[t];
+		while (piece != OFFBOARD) {
+			if (piece != EMPTY) {
+				if (IsBishopQueen(piece) && pieceColor[piece] == side) {
+					return TRUE;
+				}
+				break;
+			}
+			t += dir;
+			piece = b->pieces[t];
+		}
+	}
 
-  // check bishops and queens
-  for (i = 0; i < 4; ++i) {
-    dir = bishopDir[i];
-    temp_pos = pos+dir;
-    piece = b->chessPieces[temp_pos];
-
-    while (piece != OFFBOARD) {
-      if (piece != EMPTY) {
-        if (IsBishopQueen(piece) && pieceColor[piece] == side) {
-          return TRUE;
-        }
-        break;
-      }
-      temp_pos += dir;
-      piece = b->chessPieces[temp_pos];
-    }
-  }
-
-  return FALSE; // no attacks
+	return FALSE;
 }

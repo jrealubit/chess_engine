@@ -6,34 +6,32 @@
 #include "stdio.h"
 #include "chessEngine.h"
 
-U64 generatePositionKey(const BoardStruct* b) {
-  int i = 0;
-  int piece = EMPTY;
-  U64 finalKey = 0;
+U64 generatePosKey(const BoardStruct *b) {
+	int i = 0;
+	int piece = EMPTY;
+	U64 finalKey = 0;
 
-  for (i = 0; i < BOARD_NUM; ++i) {
-    piece = b->chessPieces[i];
+	for (i = 0; i < BRD_POS_NUM; ++i) {
+		piece = b->pieces[i];
 
-    // check to see if it an actual piece in the board
+		// check to see if it an actual piece in the board
     // that is at least a white pawn all the way to a black king
-    if (piece != NO_SQ && piece != EMPTY && piece != OFFBOARD) {
-      ASSERT(piece >= wP && piece <= bK);
-      finalKey ^= pieceKeys[piece][i];
-    }
-  }
+		if (piece != NO_SQ && piece != EMPTY && piece != OFFBOARD) {
+			ASSERT(piece >= wP && piece <= bK);
+			finalKey ^= pieceKeys[piece][i];
+		}
+	}
 
-  if (b->side == WHITE) {
-    finalKey ^= sideKey;
-  }
+	if (b->side == WHITE) {
+		finalKey ^= sideKey;
+	}
 
-  // check to see if the en passant is set
-  if (b->enPas != NO_SQ) {
-    ASSERT(b->enPas >= 0 && b->enPas < BOARD_NUM);
-    finalKey ^= pieceKeys[EMPTY][b->enPas];
-  }
+	if (b->enPas != NO_SQ) {
+		ASSERT(b->enPas >= 0 && b->enPas < BRD_POS_NUM);
+		finalKey ^= pieceKeys[EMPTY][b->enPas];
+	}
 
-  // hash in our castling permissions
-  ASSERT(b->castlePermission >= 0 && b->castlePermission <= 15);
-  finalKey ^= castleKeys[b->castlePermission];
-  return finalKey;
+	ASSERT(b->castlePermission>=0 && b->castlePermission<=15);
+	finalKey ^= castleKeys[b->castlePermission];
+	return finalKey;
 }

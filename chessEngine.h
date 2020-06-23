@@ -7,43 +7,40 @@
 #ifndef CHESS_H
 #define CHESS_H
 
-// #include "stdlib.h"
-
 #ifndef DEBUG
 #define DEBUG
 #define ASSERT(n)
 #else
 #define ASSERT(n) \
 if(!(n)) { \
-printf("%s - Failed ", #n); \
-printf("on %s ", __DATE__); \
-printf("at %s\n", __TIME__ ); \
-printf("in File %s ", __FILE__); \
-printf("at Line %d\n", __LINE__); \
-exit(-1); \
+printf("%s - Failed",#n); \
+printf("On %s ",__DATE__); \
+printf("At %s ",__TIME__); \
+printf("In File %s ",__FILE__); \
+printf("At Line %d\n",__LINE__); \
+exit(1);
 }
 #endif
 
-typedef unsigned long long U64; // 64-bit data type
-#define NAME "Sinanju 1.0"
-#define BOARD_NUM 120
+typedef unsigned long long U64; // 64-bti data type
+
+#define NAME "Shinanju 1.0"
+#define BRD_POS_NUM 120
 #define MAXGAMEMOVES 2048
-#define MAXBOARDMOVES 256
+#define MAXPOSITIONMOVES 256
 
 #define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 enum {FALSE, TRUE};
 enum {WHITE, BLACK, BOTH}; // chess colors
-
-// board file and rank and enumeration for
-// cell positions on board- w: white, b: black
-enum {EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK};
+enum {WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8}; // castling permissions
+enum {EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK}; // pieces
 enum {FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE};
 enum {RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE};
 
-// enumeration for the board
+// chess board enumeration
 enum {
-	A1 = 21, B1, C1, D1, E1, F1, G1, H1,
+  A1 = 21, B1, C1, D1, E1, F1, G1, H1,
   A2 = 31, B2, C2, D2, E2, F2, G2, H2,
   A3 = 41, B3, C3, D3, E3, F3, G3, H3,
   A4 = 51, B4, C4, D4, E4, F4, G4, H4,
@@ -53,67 +50,61 @@ enum {
   A8 = 91, B8, C8, D8, E8, F8, G8, H8, NO_SQ, OFFBOARD
 };
 
-// castling enum permissions
-enum {WKC = 1, WQC = 2, BKC = 4, BQC = 8};
-
+// Data structures
 typedef struct {
 	int move;
 	int score;
 } MoveStruct;
 
 typedef struct {
-	MoveStruct movesList[MAXBOARDMOVES];
+	MoveStruct moves[MAXPOSITIONMOVES];
 	int count;
 } MoveListStruct;
 
 typedef struct {
-	U64 posKey;
-
+  U64 posKey;
 	int move;
 	int castlePermission;
 	int enPas;
 	int fiftyMove;
 } UndoStruct;
 
-// board structure
-// note the evaluation sets are done by half-moves
+// board struct: evaluation is done in half moves
 typedef struct {
-	U64 pawns[3];
-	U64 posKey;
+  U64 posKey;
+  U64 pawns[3];
 
+	int pieces[BRD_POS_NUM];
+	int KingSq[2];
 	int side;
 	int enPas;
 	int fiftyMove;
 	int ply;
-	int histPly;
-	int move;
+	int hisPly;
 	int castlePermission;
-
-	int chessPieces[BOARD_NUM];
-	int kingSq[2];
 	int pieceNum[13];
-	int bigPieces[2]; // non-pawn pieces
-	int majorPieces[2]; // rooks and queens
-	int minorPieces[2]; // bishops and knights
+	int bigPiece[2]; // non-pawn pieces
+	int majorPiece[2]; // rooks and queens
+	int minorPiece[2]; // bishops and knights
 	int material[2];
-	int pieceList[13][10];
+  int pieceList[13][10];
 
-	// board history for retraction
-	UndoStruct boardHistory[MAXGAMEMOVES];
+  // board history for retraction
+	UndoStruct history[MAXGAMEMOVES];
 } BoardStruct;
 
 // General Macros
 #define FR2SQ(f, r) ((21+f)+(r*10))
-#define B64(b120) B120ToB64[b120]
-#define B120(b64) B64ToB120[b64]
+#define B64(b120) b120Tob64[b120]
+#define B120(b64) b64Tob120[b64]
 #define POP(b) popBit(b)
 #define CNT(b) countBits(b)
-#define SETBIT(bb, sq) (bb &= clearMask[sq])
-#define CLRBIT(bb, sq) (bb |= setMask[sq])
-#define IsKing(p) (pieceKing[p])
-#define IsKnight(p) (pieceKnight[p])
-#define IsRookQueen(p) (pieceRookQueen[p])
+#define CLRBIT(bb, pos) (bb &= clearMask[pos])
+#define SETBIT(bb, pos) (bb |= setMask[pos])
 #define IsBishopQueen(p) (pieceBishopQueen[p])
+#define IsRookQueen(p) (pieceRookQueen[p])
+#define IsKnight(p) (pieceKnight[p])
+#define IsKing(p) (pieceKing[p])
 
 // Game Move Macros
 /*
@@ -138,9 +129,10 @@ typedef struct {
 #define MFLAGCAP 0x7C000 // capture flag
 #define MFLAGPROM 0xF00000 // promotion flag
 
-// Global variables
-extern int B120ToB64[BOARD_NUM];
-extern int B64ToB120[64];
+
+// Global Variables
+extern int b120Tob64[BRD_POS_NUM];
+extern int b64Tob120[64];
 extern U64 setMask[64];
 extern U64 clearMask[64];
 extern U64 pieceKeys[13][120];
@@ -158,8 +150,8 @@ extern int pieceValue[13];
 extern int pieceColor[13];
 extern int piecePawn[13];
 
-extern int FileOnBoard[BOARD_NUM];
-extern int RankOnBoard[BOARD_NUM];
+extern int FilesBoard[BRD_POS_NUM];
+extern int RanksBoard[BRD_POS_NUM];
 
 extern int pieceKnight[13];
 extern int pieceKing[13];
@@ -177,31 +169,38 @@ extern int popBit(U64 *bb);
 extern void printBitBoard(U64 bb);
 
 // hashkeys.c
-extern U64 generatePositionKey(const BoardStruct* b);
+extern U64 generatePosKey(const BoardStruct *b);
 
 // board.c
-extern void resetBoard(BoardStruct* b);
-extern int parseFenStr(char* fen_str, BoardStruct* b);
-extern void printBoard(const BoardStruct* b);
-extern void updateMaterialLists(BoardStruct* b);
-extern int checkBoard(const BoardStruct* b);
+extern void resetBoard(BoardStruct *b);
+extern int parseFenStr(char *fen_str, BoardStruct *b);
+extern void printBoard(const BoardStruct *b);
+extern void updateMaterialLists(BoardStruct *b);
+extern int checkBoard(const BoardStruct *b);
 
 // attack.c
-extern int bPosAttacked(const int pos, const int side, const BoardStruct* b);
+extern int posAttacked(const int pos, const int side, const BoardStruct *b);
 
 // io.c
+extern char* printSq(const int pos);
 extern char* printMove(const int move);
-extern char* printBPos(const int bpos);
-extern void printMoveList(const MoveListStruct* list);
+extern void printMoveList(const MoveListStruct *list);
 
-// movegenerator.c
-extern void generateAllMoves(const BoardStruct* b, MoveListStruct* list);
+// movegen.c
+extern void generateAllMoves(const BoardStruct *b, MoveListStruct *list);
 
-// validate.c
-extern int posOnBoard(const int bPos);
-extern int sildeValid(const int side);
-extern int fileAndRankValid(const int fileRank);
-extern int pieceValid(const int piece);
+//validate.c
+extern int posOnBoard(const int pos);
+extern int sideValid(const int side);
+extern int fileRankValid(const int fr);
 extern int pieceValidEmpty(const int piece);
+extern int pieceValid(const int piece);
+
+// makemove.c
+extern int makeMove(BoardStruct *b, int move);
+extern void takeMove(BoardStruct *b);
+
+// perft.c
+extern void perftTest(int depth, BoardStruct *b);
 
 #endif
