@@ -47,6 +47,10 @@ void resetBoard(BoardStruct *b) {
 	b->hisPly = 0;
 	b->castlePermission = 0;
 	b->posKey = 0ULL;
+
+	// initialize the PV table
+	b->pvTable->pTable = NULL;
+	initTable(b->pvTable);
 }
 
 int parseFenStr(char *fen_str, BoardStruct *b) {

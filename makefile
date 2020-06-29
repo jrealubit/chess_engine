@@ -1,7 +1,10 @@
 CC = gcc
 
-build: main.o init.o bitboards.o hashkeys.o board.o data.o attack.o io.o movegenerator.o validate.o makemove.o perft.o
-	$(CC) -o chess main.o init.o bitboards.o hashkeys.o board.o data.o attack.o io.o movegenerator.o validate.o makemove.o perft.o
+build: main.o init.o bitboards.o hashkeys.o board.o data.o attack.o io.o movegenerator.o validate.o makemove.o perft.o pvtable.o
+	$(CC) -o chess main.o init.o bitboards.o hashkeys.o board.o data.o attack.o io.o movegenerator.o validate.o makemove.o perft.o pvtable.o
+
+pvtable.o: pvtable.c
+	$(CC) -c pvtable.c
 
 perft.o: perft.c
 	$(CC) -c perft.c

@@ -7,6 +7,8 @@
 #ifndef CHESS_H
 #define CHESS_H
 
+#include "stdlib.h"
+
 #ifndef DEBUG
 #define DEBUG
 #define ASSERT(n)
@@ -63,6 +65,16 @@ typedef struct {
 
 typedef struct {
   U64 posKey;
+  int move;
+} PVEntryStruct;
+
+typedef struct {
+  PVEntryStruct* pTable;
+  int numEntries;
+} PVTableStruct;
+
+typedef struct {
+  U64 posKey;
 	int move;
 	int castlePermission;
 	int enPas;
@@ -91,6 +103,9 @@ typedef struct {
 
   // board history for retraction
 	UndoStruct history[MAXGAMEMOVES];
+
+  // principal variation table
+  PVTableStruct pvTable[1];
 } BoardStruct;
 
 // General Macros
@@ -202,5 +217,9 @@ extern void takeMove(BoardStruct *b);
 
 // perft.c
 extern void perftTest(int depth, BoardStruct *b);
+
+// pvtable.c
+extern void initTable(PVTableStruct* table);
+extern void clearTable(PVTableStruct* table);
 
 #endif
